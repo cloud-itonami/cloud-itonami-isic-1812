@@ -1,0 +1,11 @@
+{:itonami.blueprint/id "cloud-itonami-1812"
+ :itonami.blueprint/name "Community Print Support Services Operations"
+ :itonami.blueprint/isic-rev5 "1812"
+ :itonami.blueprint/domain :manufacturing/print-support-services
+ :itonami.blueprint/license "AGPL-3.0-or-later"
+ :itonami.blueprint/social-impact [:worker-safety :local-jobs :waste-reduction]
+ :itonami.blueprint/governor :print-support-governor
+ :itonami.blueprint/robotics true
+ :itonami.blueprint/required-technologies [:robotics :identity :forms :dmn :bpmn :audit-ledger :cae]
+ :itonami.blueprint/optional-technologies []
+ :itonami.blueprint/status :public-oss}
