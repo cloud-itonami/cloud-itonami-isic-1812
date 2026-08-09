@@ -1,6 +1,12 @@
 {:paths ["src"]
  :deps {io.github.kotoba-lang/langgraph
-        {:git/sha "5b4e5e70837b849b14b6a5800894e3be202ad5fa"}}
+        {:git/sha "5b4e5e70837b849b14b6a5800894e3be202ad5fa"}
+        ;; paper prepress decision core (CMYK/spot/bleed/trap/imposition).
+        ;; Geometry lives only inside seihan; print-support.prepress is a
+        ;; thin findings→hold wire (Wave1 Lane B craft wire).
+        io.github.cloud-itonami/seihan
+        {:git/url "https://github.com/cloud-itonami/seihan"
+         :git/sha "b022bd26c398e148187bd0ba8f9944b65afa081f"}}
  :aliases
  {
   ;; clj-kondo from deps (no binary), errors fail CI. Added because this repo

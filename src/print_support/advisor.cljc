@@ -12,12 +12,18 @@
 
   A proposal is a map:
     {:op :log-service-job|:schedule-maintenance|:flag-quality-defect|:coordinate-delivery
+         |:plan-prepress|:prepress/plan
      :effect :propose        ; the advisor NEVER emits a raw store write
      :stake :low|:medium|:high
      :confidence 0.0-1.0
-     :rationale str}
+     :rationale str
+     :job <optional seihan job map for prepress plan ops>}
   LLM parse failures always yield `:confidence 0.0` (never fabricate
-  confidence), which forces the governor to escalate/hold."
+  confidence), which forces the governor to escalate/hold.
+
+  Prepress plan ops pass `:job` through untouched — the advisor never
+  invents plates/imposition; seihan (via print-support.prepress +
+  governor) is the only place geometry is derived."
   (:require [clojure.edn :as edn]
             [clojure.string :as str]))
 
@@ -26,14 +32,17 @@
 
 (defn- infer
   "Deterministic mock inference: reads the request's declared op/stake
-  straight through (a stand-in for what an LLM would extract from free
-  text), with a stake-derived confidence."
-  [_store {:keys [op stake] :as request}]
-  {:op op
-   :effect :propose
-   :stake (or stake :low)
-   :confidence (case (or stake :low) :high 0.7 :medium 0.85 :low 0.95)
-   :rationale (str "proposed " (name op) " for shop " (:client-id request))})
+  (and optional :job for prepress) straight through (a stand-in for
+  what an LLM would extract from free text), with a stake-derived
+  confidence."
+  [_store {:keys [op stake job] :as request}]
+  (cond-> {:op op
+           :effect :propose
+           :stake (or stake :low)
+           :confidence (case (or stake :low) :high 0.7 :medium 0.85 :low 0.95)
+           :rationale (str "proposed " (name (or op :unknown))
+                           " for shop " (:client-id request))}
+    (some? job) (assoc :job job)))
 
 (defn mock-advisor []
   (reify Advisor

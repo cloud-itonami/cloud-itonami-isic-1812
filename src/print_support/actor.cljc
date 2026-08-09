@@ -16,12 +16,34 @@
   The unconditional invariant: the PrintSupportAdvisor can never
   directly commit a record or dispatch a robot action the
   PrintSupportGovernor refuses — every commit-record! call is gated
-  behind `:decide`."
+  behind `:decide`.
+
+  Prepress craft (`:plan-prepress` / `:prepress/plan`): seihan runs
+  inside the governor (via `print-support.prepress`). Blocking findings
+  hard-hold; a clean plan attaches seihan summary on the committed
+  record (geometry still only from seihan)."
   (:require [langgraph.graph :as g]
             [langgraph.checkpoint :as cp]
             [print-support.advisor :as advisor]
             [print-support.governor :as governor]
+            [print-support.prepress :as prepress]
             [print-support.store :as store]))
+
+(defn- commit-record
+  "Build the SSoT record. For prepress plan ops, attach seihan summary
+  from the governor verdict (already computed; no second plan call, no
+  invented geometry)."
+  [request proposal verdict]
+  (let [base {:client-id (:client-id request)
+              :op (:op proposal)
+              :payload proposal}
+        pre (:prepress verdict)]
+    (if (and (prepress/plan-op? (:op proposal)) pre)
+      (assoc base
+             :prepress-summary (:summary pre)
+             :prepress-ok? (:ok? pre)
+             :source "seihan.core/plan")
+      base)))
 
 (defn build-graph
   "Build a compiled PrintSupportActor graph. `store` implements
@@ -59,10 +81,8 @@
                                      :else :commit)}))
       (g/add-node :request-approval (fn [s] s))
       (g/add-node :commit
-                   (fn [{:keys [request proposal]}]
-                     (let [record {:client-id (:client-id request)
-                                    :op (:op proposal)
-                                    :payload proposal}]
+                   (fn [{:keys [request proposal verdict]}]
+                     (let [record (commit-record request proposal verdict)]
                        (store/commit-record! store record)
                        (store/append-ledger! store {:disposition :commit :record record})
                        {:record record
