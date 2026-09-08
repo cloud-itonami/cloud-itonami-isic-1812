@@ -25,7 +25,7 @@
   invents plates/imposition; seihan (via print-support.prepress +
   governor) is the only place geometry is derived."
   (:require [clojure.edn :as edn]
-            [clojure.string :as str]))
+            [kotoba.lang.text :as str]))
 
 (defprotocol Advisor
   (-advise [advisor store request] "request -> proposal map"))
