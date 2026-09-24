@@ -1,7 +1,7 @@
 (ns print-support.prepress-test
   "Prepress craft wire: seihan.core/plan is the only geometry source;
   blocking findings become governor hard holds."
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [print-support.prepress :as prepress]
             [print-support.store :as store]
             [print-support.governor :as governor]
