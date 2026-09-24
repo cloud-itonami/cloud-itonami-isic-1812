@@ -24,7 +24,7 @@
   Prepress plan ops pass `:job` through untouched — the advisor never
   invents plates/imposition; seihan (via print-support.prepress +
   governor) is the only place geometry is derived."
-  (:require [clojure.edn :as edn]
+  (:require [kotoba.lang.edn :as edn]
             [kotoba.lang.text :as str]))
 
 (defprotocol Advisor
