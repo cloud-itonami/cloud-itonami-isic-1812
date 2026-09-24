@@ -1,5 +1,5 @@
 (ns print-support.actor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [print-support.store :as store]
             [print-support.advisor :as advisor]
             [print-support.actor :as actor]))
